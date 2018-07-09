@@ -1,0 +1,130 @@
+﻿{extend name='base' /}
+{block name='content'}
+<title>商品列表</title>
+<link rel="stylesheet" href="__AVIEW__lib/zTree/v3/css/zTreeStyle/zTreeStyle.css" type="text/css">
+</head>
+<body>
+<div>
+	<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 商品管理 <span class="c-gray en">&gt;</span> 商品列表 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+	<div class="page-container">
+		<div class="mt-20">
+			<table class="table table-border table-bordered table-bg table-hover">
+				<thead>
+					<tr class="text-c">
+						{volist name='attr' id='v'}
+						<th>{$v.0.name}</th>
+						{/volist}
+						<th width="100">库存量</th>
+						<th width="100">操作</th>
+					</tr>
+				</thead>
+				<form>
+				<tbody>
+				{if condition='$goods_number'}
+					{volist name='goods_number' id='v'}
+						{if condition='$key == 0'}
+							{php}$opt = '&#xe600;';$color = 'btn-primary';$pd = 'true';{/php}
+						{else /}
+							{php}$opt = '&#xe6a1;';$color = 'btn-danger';$pd = '';{/php}
+						{/if}
+						<tr class="text-c va-m">
+							{volist name='attr' id='vo'}
+							<td>
+								<select name="attribute_id[]" class="select">
+									<option value="">请选择</option>
+									{volist name='vo' id='vv'}
+									<option value="{$vv.id}"
+									{if condition="strpos(','.$v['attribute_id'].',',','.$vv['id'].',') !== FALSE"}
+									selected="selected"
+									{/if}
+									>{$vv.attribute_value}</option>
+									{/volist}
+								</select>
+							</td>
+							{/volist}
+							<td><input type="text" class="input-text" value="{$v.number}" name="number[]"></td>
+							<td><a href="javascript:void(0);" onclick="change(this)" class="btn {$color} radius"><i class="Hui-iconfont {$pd}">{$opt}</i></a></td>
+						</tr>
+					{/volist}
+				{else /}
+					<tr class="text-c va-m">
+						{volist name='attr' id='vo'}
+						<td>
+							<select name="attribute_id[]" class="select">
+								<option value="">请选择</option>
+								{volist name='vo' id='vv'}
+								<option value="{$vv.id}">{$vv.attribute_value}</option>
+								{/volist}
+							</select>
+						</td>
+						{/volist}
+						<td><input type="text" class="input-text" name="number[]"></td>
+						<td><a href="javascript:void(0);" onclick="change(this)" class="btn btn-primary radius"><i class="Hui-iconfont true">&#xe600;</i></a></td>
+					</tr>
+				{/if}
+					<tr id="btn" class="text-c">
+						<td colspan="{$len+2}">
+							<input type="hidden" name="id" value="{$id}">
+							<button onclick="insert()" class="btn btn-primary radius" type="button"> 提交</button>
+						</td>
+					</tr>
+				</tbody>
+				</form>
+			</table>
+		</div>
+	</div>
+</div>
+{/block}
+
+{block name='footer'}
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="__AVIEW__lib/zTree/v3/js/jquery.ztree.all-3.5.min.js"></script>
+<script type="text/javascript" src="__AVIEW__lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="__AVIEW__lib/laypage/1.2/laypage.js"></script>
+<script type="text/javascript">
+	function change(obj){
+		var tr = $(obj).parent().parent();
+		if(tr.find("i").hasClass("true")){
+			var newTr = tr.clone();
+			// 把克隆出来的div里面的i标签变成-号
+			newTr.find("i").first().removeClass("true");
+			newTr.find("a").first().removeClass("btn-primary");
+			newTr.find("a").first().addClass("btn-danger");
+			newTr.find("i").first().html("&#xe6a1;");
+			newTr.find("input").val('');
+			$("#btn").before(newTr);
+		}else
+			tr.remove();
+	}
+
+	function insert(){
+		var attr = [];
+		$("select[name='attribute_id[]'] option:selected").each(function(){
+			attr.push($(this).val());
+		});
+		var num = [];
+		$("input[name='number[]']").each(function(){
+			num.push($(this).val());
+		})
+		var data = {
+			'id' : $("input[name='id']").val(),
+			'attribute_id' : attr,
+			'number' : num,
+		};
+
+		$.ajax({
+			url : "{:url('kucun')}",
+			data : data,
+			dataType : 'json',
+			type : 'post',
+			success : function(info){
+				if(info.code==1){
+					layer.msg(info.msg,{icon:1,time:1000},function(){
+						parent.location.reload();
+					})
+				}
+			}
+		})
+	}
+</script>
+{/block}

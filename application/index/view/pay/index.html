@@ -1,0 +1,99 @@
+{extend name='_nav' /}
+{block name='title'}
+	<title>确认订单</title>
+{/block}
+
+{block name='js'}
+	<link rel="stylesheet" href="__CSS__/confirm_order.css" />
+{/block}
+
+{block name='content'}
+		<!--内容-->
+		<div class="middle">
+			<div class="box">
+				<ul class="address">
+					{volist name='addrData' id='v'}
+					<li>
+						<p>{$v.address}</p>
+						<span class="name">{$v.name}</span>
+						<span class="phone">{$v.phone}</span><br />
+						<span class="del"><a href="javascript:void(0)" onclick="del('{$v.id}')">删除</a></span>
+						<span class="edit" value="{$v.id}"><a href="javascript:void(0)" onclick="edit(this)">编辑</a></span>
+					</li>
+					{/volist}
+					<li onclick="addr_add()">
+						<span class="del"><a href="javascript:void(0)">新建地址</a></span>
+					</li>
+				</ul>
+				<h5>确认订单信息</h5>
+				<div class="title">
+					<span class="pro_info">商品信息</span>
+					<span class="count">数量</span>
+					<span class="unit">单价</span>
+					<span class="total">小计</span>
+				</div>
+				<ol class="order_info">
+					{volist name='goodsData' id='v'}
+					<li>
+						<span class="pro_img"><a href="{:url('@detail/'.$v['goods_id'])}"><img src="{$v.logo}" style="width: 191px;height: 125px;" /></a></span>
+						<h5><a href="{:url('@detail/'.$v['goods_id'])}">{$v.goods_name}</a></h5>
+						<span class="color_sort">{$v.attr}</span>
+						<span class="count">{$v.number}</span>
+						<span class="unit">{$v.price}</span>
+						<span class="total">{$v.number * $v.price}</span>
+						<div>
+							<span class="trans_method">运输方式：普通运输</span>
+							<span class="unit">{$v.freight_price}</span>
+							<span class="total">{$v.freight_price}</span>
+						</div>
+					</li>
+					{/volist}	
+				</ol>
+				<div class="summation">
+					<span class="sum">合计 <span class="sum_price">{$total_price}</span></span>
+						<form onsubmit="return false">
+							<input type="button" id="sub" onclick="order_submit()" value="提交订单" />
+						</form>
+				</div>
+						
+			</div>
+		</div>
+{/block}
+
+{block name='footer'}
+	<script type="text/javascript" src="__JS__/comfirm_order.js"></script>
+	<script>
+		function addr_add(){
+			window.location.href = "{:url('@address/1/'.$order_id)}";
+		}
+
+		function order_submit(){
+			var addr_id;
+			$(".edit").each(function(){
+				if( $(this).css("display") == "block" ){
+					addr_id = $(this).attr("value");
+				}
+			});
+			var data = {
+				'addr_id' : addr_id,
+				'order_id' : "{$order_id}",
+			}
+			
+			$.ajax({
+				url : "{:url('@pay_money')}",
+				data : data,
+				type : 'post',
+				dataType : 'json',
+				success : function(info){
+					if( info.code == 1 ){
+						layer.msg(info.msg,{icon:1,time:1000},function(){
+							top.location.href = info.url;
+						})
+					}else{
+						layer.msg(info.msg,{icon:2,time:1000})
+					}
+				}
+			})
+		}
+	</script>
+{/block}

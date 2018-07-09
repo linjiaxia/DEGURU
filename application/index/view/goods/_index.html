@@ -1,0 +1,11 @@
+{volist name='goodsData' id='v'}
+	<li>
+		<a href="{:url('@detail/'.$v['id'])}"><img src="{$Think.const.DS . 'upload' . $Think.const.DS . $v.logo}" alt="{$v.name}"  style="width: 293px;height: 309px;"/></a>
+		<h6><a href="{:url('@detail/'.$v['id'])}">{$v.name}</a></h6>
+		<span class="price">¥<i>{$v.shop_price}</i></span>
+		<p>
+			<span class="quantity">销售量 199</span>
+			<span class="stock">{:empty($v.number) ? '暂无库存' : '库存 ' . $v.number . '件'}</span>
+		</p>
+	</li>
+{/volist}

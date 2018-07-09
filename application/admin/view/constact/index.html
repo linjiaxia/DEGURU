@@ -1,0 +1,59 @@
+﻿{extend name='base' /}
+{block name='content'}
+<title>联系我们列表</title>
+<link rel="stylesheet" href="__AVIEW__lib/zTree/v3/css/zTreeStyle/zTreeStyle.css" type="text/css">
+</head>
+<body>
+<div>
+	<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 前台管理 <span class="c-gray en">&gt;</span> 联系我们管理 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+	<div class="page-container">
+		<div class="text-c">
+			<input type="text" name="" id="" placeholder=" 联系我们名称" style="width:250px" class="input-text">
+			<button name="" id="" class="btn btn-success" type="submit"><i class="Hui-iconfont">&#xe665;</i> 搜联系我们</button>
+		</div>
+		<div class="cl pd-5 bg-1 bk-gray mt-20"><span class="r">共有数据：<strong>{$total}</strong> 条</span> </div>
+		<div class="mt-20">
+			<table class="table table-border table-bordered table-bg table-hover">
+				<thead>
+					<tr class="text-c">
+						<th width="40"><input name="" type="checkbox" value=""></th>
+						<th width="40">ID</th>
+						<th width="80">名称</th>
+						<th>内容</th>
+						<th width="80">路由地址</th>
+						<th>图片</th>
+						<th width="100">操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					{volist name='list' id='v'}
+					<tr class="text-c va-m">
+						<td><input name="id" type="checkbox" value="{$v.id}"></td>
+						<td>{$v.id}</td>
+						<td>{$v.name}</td>
+						<td>{$v.content}</td>
+						<td>{$v.url}</td>
+						<td><img width="100" class="product-thumb" src="{$v.img}"></td>
+						<td class="td-manage"> <a style="text-decoration:none" class="ml-5" onclick="edit('联系我们编辑','{:url('edit',['id'=>$v.id])}','','400')" href="javascript:;" title="编辑"><i class="Hui-iconfont">&#xe6df;</i></a></td>
+					</tr>
+					{/volist}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+{/block}
+
+{block name='footer'}
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="__AVIEW__lib/zTree/v3/js/jquery.ztree.all-3.5.min.js"></script>
+<script type="text/javascript" src="__AVIEW__lib/My97DatePicker/4.8/WdatePicker.js"></script> 
+<script type="text/javascript" src="__AVIEW__lib/datatables/1.10.0/jquery.dataTables.min.js"></script> 
+<script type="text/javascript" src="__AVIEW__lib/laypage/1.2/laypage.js"></script>
+<script type="text/javascript">
+/*编辑*/
+function edit(title,url,w,h){
+	layer_show(title,url,w,h);
+}
+</script>
+{/block}

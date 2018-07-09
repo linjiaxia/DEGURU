@@ -1,0 +1,84 @@
+{extend name='_middle' /}
+{block name='title'}
+	<title>商品列表</title>
+{/block}
+
+{block name='js'}
+	<link rel="stylesheet" href="__CSS__/shop_list.css" />
+{/block}
+
+{block name='content'}
+		<!--内容-->
+		<div class="middle">
+			<div class="box">
+				<h6>多功能锅</h6>
+				<ul>
+					<li>
+						<h6>品牌</h6>
+						<ul>
+							{volist name='brandData' id='v'}
+							<li><a href="javascript:void(0)" brand_id="{$v.id}">{$v.english != '' ? $v.english.'/' : ''}{$v.name}</a></li>
+							{/volist}
+						</ul>
+					</li>
+					{volist name='attrData' id='v'}
+					<li>
+						<h6>{$v.name}</h6>
+						<ul>
+							{volist name='$v.values' id='vo'}
+							<li><a href="javascript:void(0)" attr_id="{$vo}">{$vo}</a></li>
+							{/volist}
+						</ul>
+					</li>
+					{/volist}
+				</ul>
+				<ol class="pro_list">
+					{volist name='goodsData' id='v'}
+						<li>
+							<a href="{:url('@detail/'.$v['id'])}"><img src="{$Think.const.DS . 'upload' . $Think.const.DS . $v.logo}" alt="{$v.name}"  style="width: 293px;height: 309px;"/></a>
+							<h6><a href="{:url('@detail/'.$v['id'])}">{$v.name}</a></h6>
+							<span class="price">¥<i>{$v.shop_price}</i></span>
+							<p>
+								<span class="quantity">销售量 199</span>
+								<span class="stock">{:empty($v.number) ? '暂无库存' : '库存 ' . $v.number . '件'}</span>
+							</p>
+						</li>
+					{/volist}
+				</ol>
+				<div class="page_list">
+					{$page}
+				</div>
+
+			</div>
+		</div>
+{/block}
+
+{block name='footer'}
+	<script>
+		$(".box >ul >li >ul >li").click(function(){
+			$(this).siblings().find("a").removeClass("active");
+			$(this).find("a").addClass("active");
+
+			var attr_id = [];
+			$(".box >ul >li").not(":first").find("a.active").each(function(){
+				attr_id.push($(this).attr("attr_id"));
+			});
+			var data = {
+				'brand_id' : $(".box >ul >li:first").find("a.active").attr("brand_id"),
+				'attr_id' : attr_id,
+			}
+			$.ajax({
+				url : "{:url('@search')}",
+				type : 'post',
+				dataType : 'json',
+				data : data,
+				success : function(info){
+					if( info.code == 1 ){
+						$(".pro_list").html(info.msg);
+						$(".page_list").html(info.page);
+					}
+				}
+			})
+		});
+	</script>
+{/block}

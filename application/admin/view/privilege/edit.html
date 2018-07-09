@@ -1,0 +1,100 @@
+{extend name='base'}
+{block name='content'}
+<title>权限设置</title>
+</head>
+<body>
+<div class="page-container">
+	<form class="form form-horizontal">
+		<div id="tab-category" class="HuiTab">
+			<div class="row cl">
+				<label class="form-label col-xs-4 col-sm-3">
+					<span class="c-red">*</span>
+					权限名称：</label>
+				<div class="formControls col-xs-8 col-sm-9">
+					<input type="text" class="input-text" value="{$result.name}" name="name">
+				</div>
+				<div class="col-3">
+				</div>
+			</div>
+			<div class="row cl">
+				<label class="form-label col-xs-4 col-sm-3">
+					<span class="c-red">*</span>
+					上级权限：</label>
+				<div class="formControls col-xs-8 col-sm-9">
+					<span class="select-box">
+					<select class="select" name="pid" onchange="SetSubID(this);">
+						<option value="0">顶级权限</option>
+						{volist name='list' id='v'}
+						<option value="{$v.id}"
+						{$v.id==$result.pid?'selected="selected"':''}
+						>{$v.level|str_repeat='&nbsp;&nbsp;',###}{$v.name}</option>
+						{/volist}
+					</select>
+					</span>
+				</div>
+				<div class="col-3">
+				</div>
+			</div>
+			<div class="row cl">
+				<label class="form-label col-xs-4 col-sm-3">
+					控制器：</label>
+				<div class="formControls col-xs-8 col-sm-9">
+					<input type="text" class="input-text" value="{$result.controller}" name="controller">
+				</div>
+				<div class="col-3">
+				</div>
+			</div>
+			<div class="row cl">
+				<label class="form-label col-xs-4 col-sm-3">
+					方法：</label>
+				<div class="formControls col-xs-8 col-sm-9">
+					<input type="text" class="input-text" value="{$result.action}" name="action">
+				</div>
+				<div class="col-3">
+				</div>
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="col-9 col-offset-3">
+				<input type="hidden" name="id" value="{$result.id}">
+				<input class="btn btn-primary radius" onclick="update()" type="button" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+			</div>
+		</div>
+	</form>
+</div>
+{/block}
+
+{block name='footer'}
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="__AVIEW__lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="__AVIEW__lib/jquery.validation/1.14.0/jquery.validate.js"></script> 
+<script type="text/javascript" src="__AVIEW__lib/jquery.validation/1.14.0/validate-methods.js"></script> 
+<script type="text/javascript" src="__AVIEW__lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript">
+	function update(){
+		var data = $("form").serialize();
+
+		$.ajax({
+			url : '{:url('update')}',
+			data : data,
+			dataType : 'json',
+			type : 'post',
+			success : function(info){
+				if(info.code==1){
+					layer.msg(info.msg,{icon:1,time:1000},function(){
+						parent.location.reload();
+					})
+				}else{
+					layer.msg(info.msg,{icon:2,time:1000})
+				}
+			}
+		})
+	}
+	$("input").keyup(function(e){
+	    if(e.keyCode == 13){
+	      $("input[type='button']").click();
+	    }
+	})
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+{/block}

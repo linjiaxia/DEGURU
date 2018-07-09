@@ -1,0 +1,293 @@
+{extend name='_middle' /}
+{block name='title'}
+	<title>商品详情</title>
+{/block}
+
+{block name='js'}
+	<link rel="stylesheet" href="__CSS__/pro_details.css" />
+{/block}
+
+{block name='content'}
+	<!--内容-->
+	<div class="middle">
+		<div class="box">
+			<div class="img_info">
+				<div class="big">
+					<img src="{$Think.const.DS . 'upload' . $Think.const.DS . $goodsData.logo}" alt="{$goodsData.name}"  style="width: 596px;height: 452px;"/>
+					<div class="box1"></div>
+				</div>
+				
+				<div class="thumb">
+					<div>
+						<ul>
+						<li class="turn"><img src="{$Think.const.DS . 'upload' . $Think.const.DS . $goodsData.logo}" alt="{$goodsData.name}"  style="width: 154px;height: 147px;"/></li>
+						{volist name='photoData' id='v'}
+						<li><img src="{$Think.const.DS . 'upload' . $Think.const.DS . $v}" alt="{$goodsData.name}"  style="width: 154px;height: 147px;"/></li>
+						{/volist}
+						</ul>
+					</div>
+					<span class="left"><img src="__STATIC__/img/arrow_left.png" alt="" /></span>
+					<span class="right"><img src="__STATIC__/img/arrow_right.png" alt="" /></span>
+				</div>
+			</div>
+			<div class="pro_info">
+				<div class="original"></div>
+				<h5>{$goodsData.name}{$goodsData.is_sale == 1 ? '' : '(已下架)'}</h5>
+				<span>收藏</span>
+				<div>
+					<p>¥<span>{$goodsData.shop_price}</span></p>
+					<span>特色：{$goodsData.feature}</span>
+					<span>{$goodsData.promote_price}</span>
+					<span></span>
+					<ul>
+						<li>月销量 {$salesNumber.count}</li>
+						<li>评价 {$commentNumber.count}</li>
+						<li>待评价 {$waitCommentData.count}</li>
+					</ul>
+				</div>
+				{volist name='attrPriceData' id='v'}
+				<dl class="choose">
+						<dt>{$key}</dt>
+						{volist name='$v' id='vo'}
+							<dd {$goodsData.is_sale == 1 ? 'onclick="change_price(this)"':''}
+							value="{$key}"
+							{$i == 1 ? 'class="active"':''}
+							style="{:strpos(','.$attrIdData.',',','.$key.',') !== false ? 'color: black;' : 'color: gray;'}"
+							>{$vo}</dd>
+						{/volist}
+				</dl>
+				{/volist}
+				<dl class="quantity">
+					<dt>数量</dt>
+					<dd>
+						<input type="text" name="number" class="quantity_num" value="1">
+						<div class="add"><span></span></div>
+						<div class="reduce"><span></span></div>
+					</dd>
+					<dd>库存<span></span>件</dd>
+				</dl>
+				<a href="javascript:void(0)" class="purchase" onclick="pay('{$goodsData.id}')">立即购买</a>
+				<a href="javascript:void(0)" class="add_to_cart" onclick="setProduct('{$goodsData.id}')">加入购物车</a>
+			</div>
+			<div class="parameters">
+				<h4>产品参数</h4>
+				<ul>
+					{volist name='attrData' id='v'}
+					<li>{$key}：{$v} </li>
+					{/volist}
+				</ul>
+			</div>
+			<div class="tabs">
+				<span class="pro_detail on">产品详情</span>
+				<span class="comment">商品评价</span>
+			</div>
+			<ul class="details">
+				{$goodsData.goods_desc}
+			</ul>
+			<div class="evalution">
+				<ul class="score">
+					<li>
+						<img src="__STATIC__/img/evalution_quantity.png" />
+						<span>质量好</span>
+					</li>
+					<li>
+						<img src="__STATIC__/img/evalution_practicability.png" />
+						<span>很实用</span>
+					</li>
+					<li>
+						<img src="__STATIC__/img/evalution_transfer.png" />
+						<span>物流快</span>
+					</li>
+					<li>
+						<img src="__STATIC__/img/evalution_server.png" />
+						<span>服务一流</span>
+					</li>
+					<li>
+						<img src="__STATIC__/img/evalution_performance.png" />
+						<span>性价比高</span>
+					</li>
+					<li>
+						<img src="__STATIC__/img/evalution_easy.png" />
+						<span>简单易用</span>
+					</li>
+					<li>
+						<img src="__STATIC__/img/evalution_appearance.png" />
+						<span>外观不错</span>
+					</li>
+				</ul>
+				<ul class="evalute">
+					{volist name='commentData' id='v'}
+					<li>
+						<div class="account">
+							<span class="avatar"><img src="{$Think.const.DS . 'upload' . $Think.const.DS . $v.face}" alt="{$v.name}"  style="width: 61px;height: 58px;"/></span>
+							<span class="account_name">{$v.name}</span>
+						</div>
+						<div>
+							<p>{$v.content}</p>
+							<span class="time">{$v.create_time|date=###,'Y-m-d H:i:s'}</span>
+							<a href="javascript:void(0)" class="addition">追加评论</a>
+							<img src="__STATIC__/img/evalute_img01.jpg" />
+							<img src="__STATIC__/img/evalute_img02.jpg" />
+							<img src="__STATIC__/img/evalute_img03.jpg" />
+						</div>
+					</li>
+					{/volist}
+				</ul>
+				<div class="page_list">
+					{$page}
+				</div>
+			</div>
+			<div class="others">
+				<h4>其他商品</h4>
+				<ol>
+					{volist name='otherData' id='v'}
+					<li>
+						<a href="{:url('@detail/' . $v['id'])}"><img src="{$Think.const.DS . 'upload' . $Think.const.DS . $v.logo}" alt="{$v.name}"  style="width: 293px;height: 309px;"/></a>
+						<h6><a href="{:url('@detail/' . $v['id'])}">{$v.name}</a></h6>
+						<span class="price">¥<i>{$v.shop_price}</i></span>
+						<p>
+							<span class="quantity">销售量 199</span>
+							<span class="stock">{$v.number == '' ? '暂无库存' : '库存 ' . $v.number . '件'}</span>
+						</p>
+					</li>
+					{/volist}
+				</ol>
+			</div>
+		</div>
+	</div>
+{/block}
+
+{block name='footer'}
+<script type="text/javascript" src="__JS__/shopCar.js" ></script>
+<script type="text/javascript" src="__JS__/pro_details.js" ></script>
+<script>
+	$(function(){
+		var ids = [];
+		$(".choose dd.active").each(function(){
+			ids.push($(this).attr("value"));
+		});
+		var data = {
+			'ids' : ids,
+		}
+		$.ajax({
+			url : "{:url('@getPrice')}",
+			type : 'post',
+			dataType : 'json',
+			data : data,
+			success : function(info){
+				if(info.code == 1){
+					var price = $(".pro_info p span").html(info.msg);
+					$(".quantity").children("dd:last-child").find("span").html(info.url);
+					if( info.url == 0 ){
+						$(".pro_info").find($(".purchase")).css("background-color","gray");
+						$(".pro_info").find($(".purchase")).removeAttr('onclick');
+						$(".add_to_cart").css("border-color","gray");
+						$(".add_to_cart").removeAttr("onclick");
+					}
+				}
+			}
+		})
+	})
+
+	$(".left").find("img").mouseover(function(){$(this).attr("src","__STATIC__/img/arrow_left_red.png");});$(".left").find("img").mouseout(function(){$(this).attr("src","__STATIC__/img/arrow_left.png");});$(".right").find("img").mouseover(function(){$(this).attr("src","__STATIC__/img/arrow_right_red.png");});$(".right").find("img").mouseout(function(){$(this).attr("src","__STATIC__/img/arrow_right.png");});
+
+	function change_price(obj){
+		if( $(obj).hasClass("active") == false ){
+			$(obj).siblings("dd").removeAttr("class");
+			$(obj).addClass("active");
+			var ids = [];
+			$(".choose dd.active").each(function(){
+				ids.push($(this).attr("value"));
+			});
+			var data = {
+				'ids' : ids,
+			}
+			$.ajax({
+				url : "{:url('@getPrice')}",
+				type : 'post',
+				dataType : 'json',
+				data : data,
+				async : false,
+				success : function(info){
+					if(info.code == 1){
+						var price = $(".pro_info p span").html(info.msg);
+						$(".quantity").children("dd:last-child").find("span").html(info.url);
+						if( info.url == 0 ){
+							$(".pro_info").find($(".purchase")).css("background-color","gray");
+							$(".pro_info").find($(".purchase")).removeAttr('onclick');
+							$(".add_to_cart").css("border-color","gray");
+							$(".add_to_cart").removeAttr("onclick");
+						}else{
+							$(".pro_info").find($(".purchase")).css("background-color","");
+							$(".pro_info").find($(".purchase")).attr("onclick","pay('{$goodsData.id}')");
+							$(".add_to_cart").css("border-color","");
+							$(".add_to_cart").attr("onclick","setProduct('{$goodsData.id}')");
+						}
+					}
+				}
+			})
+		}
+	}
+
+	function pay(id){
+		var url = "{:url('@immediately')}";
+		var ids = [];
+		$(".choose dd.active").each(function(){
+			ids.push($(this).attr("value"));
+		});
+		var number = $("input[name='number']").val();
+		var kucun = $(".quantity").children("dd:last-child").find("span").text();
+		if( number > kucun ){
+			layer.msg('购买量超出库存',{icon:2,time:1000})
+			return false;
+		}
+		var data = {
+			'goods_attr_id' : ids,
+			'number' : number,
+			'goods_id' : id,
+		}
+		$.StandardPost(url,data);
+	}
+
+	$.extend({
+	    StandardPost:function(url,args){
+	        var form = $("<form method='post' style='display: none;'></form>"),
+	            input;
+	        form.attr({"action":url});
+	        $.each(args,function(key,value){
+	            input = $("<input type='hidden'>");
+	            input.attr({"name":key});
+	            input.val(value);
+	            form.append(input);
+	        });
+	        form.appendTo(document.body);
+	        form.submit();
+	    }
+	});
+
+	function setProduct(id){
+		var ids = [];
+		$(".choose dd.active").each(function(){
+			ids.push($(this).attr("value"));
+		});
+		var data = {
+			'ids' : ids,
+			'number' : $("input[name='number']").val(),
+			'goods_id' : id,
+		}
+		
+		$.ajax({
+			url : "{:url('@set_cart')}",
+			type : 'post',
+			data : data,
+			dataType : 'json',
+			success : function(info){
+				if( info.code == 1 )
+					layer.msg(info.msg,{icon:1,time:1000});
+				else
+					layer.msg(info.msg,{icon:2,time:1000});
+			}
+		})
+	}
+</script>
+{/block}

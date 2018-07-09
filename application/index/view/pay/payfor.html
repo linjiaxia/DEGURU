@@ -1,0 +1,102 @@
+{extend name='_nav' /}
+{block name='title'}
+	<title>支付页面</title>
+{/block}
+
+{block name='js'}
+	<link rel="stylesheet" href="__CSS__/pay.css" />
+{/block}
+
+{block name='content'}
+		<!--内容-->
+		<div class="middle">
+			{switch name='status'}
+				{case value='1'}
+					<div class="success">
+						<div>
+							<h1>支付成功</h1>
+							<span class="checkorder"><a href="{:url('@order_detail/'.$order_id)}">查看订单</a></span>
+						</div>
+					</div>
+				{/case}
+				{case value='2'}
+					<div class="fail">
+						<div>
+							<h1>支付失败</h1>
+							<span class="repay"><a href="{:url('@payfor/'.$order_id.'/0')}">返回支付</a></span>
+							<span class="checkorder"><a href="{:url('@order_detail/'.$order_id)}">查看订单</a></span>
+						</div>
+					</div>
+				{/case}
+				{default /}
+			{/switch}
+			<div class="box">
+				<p>你需要支付金额<span class="total_price">{$moneyData}</span></p>
+				<div class="choice">
+					<h3>请选择支付方式</h3>
+					<span></span><br />
+					<form id="alipay" action="{:url('@alipay')}" method="post">
+						<ul class="linepay">
+							<input type="hidden" name='order_id' value="{$order_id}">
+							<li value="1"><img src="__STATIC__/img/Alipay.jpg" onclick="alipay()" /></li>
+							<li value="2" style="text-align: center;line-height: 49px;cursor: pointer;"><span>余额</span></li>
+						</ul>
+					</form><br />
+					<h3>请输入支付密码</h3>
+					<span></span>
+					<form class="pay">
+						<input type="password" name="password[]" maxlength="1" /><input type="password" name="password[]" maxlength="1" /><input type="password" name="password[]" maxlength="1" /><input type="password" name="password[]" maxlength="1" /><input type="password" name="password[]" maxlength="1" /><input type="password" name="password[]" maxlength="1" /><br />
+						<input type="button" id="sub" value="确认" onclick="realpay()" />
+					</form>
+				</div>
+			</div>
+		</div>
+{/block}
+
+{block name='footer'}
+	<script src="__JS__/pay.js"></script>
+	<script>
+		$(".linepay").find("li").click(function(){
+			if( $(this).hasClass("active") == false ){
+				$(this).addClass("active");
+				$(this).siblings().removeClass("active");
+			}	
+		})
+
+		function alipay(){
+			$("#alipay").submit();
+		}
+
+		function realpay(){
+			var pwd = [];
+			$("input[name='password[]']").each(function(){
+				pwd.push($(this).val())
+			})
+			var data = {
+				'order_id' : "{$order_id}",
+				'password' : pwd,
+				'method' : $(".linepay").find("li.active").val(),
+			}
+
+			$.ajax({
+				url : "{:url('@realpay')}",
+				data : data,
+				dataType : 'json',
+				type : 'post',
+				success : function(info){
+					if( info.code == 1 ){
+						layer.msg(info.msg,{icon:1,time:1000},function(){
+							top.location.href = info.url;
+						});
+					}else if( info.code == 2 ){
+						layer.msg(info.msg,{icon:2,time:1000},function(){
+							top.location.href = info.url;
+						});
+					}else{
+						layer.msg(info.msg,{icon:2,time:1000});
+					}
+				}
+			})
+		}
+	</script>
+{/block}

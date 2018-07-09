@@ -1,0 +1,11 @@
+{volist name='list' id='v'}
+	<tr class="text-c">
+		<td><input type="checkbox" name="id" value="{$v.id}"></td>
+		<td>{$v.id}</td>
+		<td class="text-c">{$v.pid}</td>
+		<td class="text-c">{$v.name}</td>
+		<td class="td-status"><span class="label {$v.is_show==1?'label-success':'label-error'} radius">{$v.is_show==1?'显示':'隐藏'}</span></td>
+		<td class="f-14"><a title="编辑" href="javascript:;" onclick="edit('栏目编辑','{:url('edit',['id'=>$v.id])}','','300')" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a>
+			<a title="删除" href="javascript:;" onclick="del(this,'{$v.id}')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td>
+	</tr>
+{/volist}

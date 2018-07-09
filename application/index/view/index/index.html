@@ -1,0 +1,160 @@
+{extend name='_nav' /}
+{block name='title'}
+	<title>首页</title>
+{/block}
+
+{block name='js'}
+	<link rel="stylesheet" href="__CSS__/index.css" />
+	<script type="text/javascript" src="__JS__/banner.js"></script>
+{/block}
+
+{block name='content'}
+		<!--内容-->
+		<div class="middle">
+			<div class="banner">
+				<div class="wrapper">
+					{volist name='bannerData' id='v'}
+					<img {$key == 0 ? 'class="active"':''} src="{$Think.const.DS . 'upload' . $Think.const.DS . $v.pic}" alt="{$v.name}" style="width: 1920px;height: 600px;"/>
+					{/volist}
+				</div>
+				<div class="squares">
+					<span class="turn"></span>
+					<span></span>
+					<span></span>
+				</div>
+			</div>
+			<div class="promotion_pro">
+				<ul>
+					{volist name='promoteData' id='v'}
+					<li>
+						<img src="{$Think.const.DS . 'upload' . $Think.const.DS . $v.logo}" alt="{$v.name}" style="width: 300px;height: 280px;">
+						<div>
+							<a href="{:url('@detail/'.$v['id'])}">{$v.name}</a>
+						</div>
+					</li>
+					{/volist}
+				</ul>
+			</div>
+			<!--最新产品-->
+			<div class="latest_pro">
+				<div>
+					<div class="title">
+						<h3>最新产品</h3>
+						<h4>latest product</h4></div>
+					<div class="product">
+						<a href="{$advertData.0.url}"><img src="{$Think.const.DS . 'upload' . $Think.const.DS . $advertData.0.pic}" alt="{$advertData.0.name}" style="width: 318px;height: 800px;"/></a>
+						<ul>
+							{volist name='newData' id='v'}
+							<li>
+								<a href="{:url('@detail/'.$v['id'])}"><img src="{$Think.const.DS . 'upload' . $Think.const.DS . $v.logo}" alt="{$v.name}" style="width: 278px;height: 290px;"/></a>
+								<h5><a href="{:url('@detail/'.$v['id'])}">{$v.name}</a></h5>
+							</li>
+							{/volist}
+						</ul>
+					</div>
+				</div>
+			</div>
+			<!--热门产品-->
+			<div class="best_sell_pro">
+				<div class="title">
+					<h3>热门产品</h3>
+					<h4>latest product</a></div>
+				<ul>
+					{volist name='hotData' id='v'}
+					<li>
+						<a href="{:url('@detail/'.$v['id'])}"><img src="{$Think.const.DS . 'upload' . $Think.const.DS . $v.logo}" alt="{$v.name}" style="width: 290px;height: 464px;"/></a>
+						<div>
+							<h4><a href="{:url('@detail/'.$v['id'])}">{$v.name}</a></h4>
+							<span>月销量5572</span><br />
+							<span>累计评价19016</span>
+							<p class="price">￥{$v.shop_price}</p>
+						</div>
+					</li>
+					{/volist}
+				</ul>
+			</div>
+			<!--推荐产品-->
+			<div class="recommend_pro">
+				<div>
+					<div class="title">
+						<h3>推荐产品</h3>
+						<h4>latest product</a></div>
+					<div class="product">
+						<a href="{$advertData.1.url}"><img src="{$Think.const.DS . 'upload' . $Think.const.DS . $advertData.1.pic}" alt="{$advertData.1.name}" style="width: 318px;height: 800px;"/></a>
+						<ul>
+							{volist name='bestData' id='v'}
+							<li>
+								<a href="{:url('@detail/'.$v['id'])}"><img src="{$Think.const.DS . 'upload' . $Think.const.DS . $v.logo}" alt="{$v.name}" style="width: 278px;height: 290px;"/></a>
+								<h5><a href="{:url('@detail/'.$v['id'])}">{$v.name}</a></h5>
+							</li>
+							{/volist}
+						</ul>
+					</div>
+				</div>
+			</div>
+			<!--爆款热门产品-->
+			<div class="hot_cake_pro">
+				<div class="title">
+					<h3>爆款热门产品</h3>
+					<h4>latest product</h4></div>
+				<div class="sales_best">
+					<div class="sub_title">
+						<h2>销量第一</h2>
+						<p>专属于你的购物指南</p>
+					</div>
+					<ul>
+						{volist name='salesData' id='v'}
+						{if condition='$key == 0 or $key == 3'}
+						<li>
+							<a href="{:url('@detail/'.$v['goods_id'])}"><img src="{$v.logo}" alt="{$v.name}" style="width: 297px;height: 194px;" /></a>
+							<div>
+								<h5><a href="{:url('@detail/'.$v['goods_id'])}">{$v.name}</a></h5>
+								<span>{$v.count}</span>
+								<p class="price">￥{$v.shop_price}</p>
+							</div>
+						</li>
+						{else /}
+						<li>
+							<div>
+								<h5><a href="{:url('@detail/'.$v['goods_id'])}">{$v.name}</a></h5>
+							</div>
+							<a href="{:url('@detail/'.$v['goods_id'])}"><img src="{$v.logo}" alt="{$v.name}" style="width: 298px;height: 195px;" /></a>
+						</li>
+						{/if}
+						{/volist}
+					</ul>
+				</div>
+				<div class="evaluate_best">
+					<div class="sub_title">
+						<h2>评价第一</h2>
+						<p>专属于你的购物指南</p>
+					</div>
+					<ul>
+						{volist name='commentData' id='v'}
+						{if condition='$key == 0 or $key == 3'}
+						<li>
+							<a href="{:url('@detail/'.$v['goods_id'])}"><img src="{$v.logo}" alt="{$v.name}" style="width: 297px;height: 194px;" /></a>
+							<div>
+								<h5><a href="{:url('@detail/'.$v['goods_id'])}">{$v.name}</a></h5>
+								<span>{$v.count}</span>
+								<p class="price">￥{$v.shop_price}</p>
+							</div>
+						</li>
+						{else /}
+						<li>
+							<div>
+								<h5><a href="{:url('@detail/'.$v['goods_id'])}">{$v.name}</a></h5>
+							</div>
+							<a href="{:url('@detail/'.$v['goods_id'])}"><img src="{$v.logo}" alt="{$v.name}" style="width: 298px;height: 195px;" /></a>
+						</li>
+						{/if}
+						{/volist}
+					</ul>
+				</div>
+			</div>
+		</div>
+{/block}
+
+{block name='footer'}
+	<script type="text/javascript" src="__JS__/bannerLeft.js"></script>
+{/block}

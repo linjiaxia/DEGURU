@@ -1,0 +1,65 @@
+{extend name='_nav' /}
+{block name='title'}
+	<title>订单</title>
+{/block}
+
+{block name='js'}
+	<link rel="stylesheet" href="__CSS__/order.css" />
+{/block}
+
+{block name='content'}
+		<!--内容-->
+		<div class="middle">
+			<div class="box">
+				<h3>我的订单信息</h3>
+				<table cellpadding="0" cellspacing="0" border="0">
+					<thead>
+						<tr>
+							<th>商品信息</th>
+							<th>数量</th>
+							<th>单价</th>
+							<th>实付款</th>
+							<th>交易状态</th>
+						</tr>
+					</thead>
+					<tbody>
+						{volist name='orderData' id='v'}
+						<tr onclick="jump('{$v.id}','{$v.status_n}')" style="cursor: pointer;">
+							<td>
+								<div>
+									<a href="{:url('@detail/'.$v['goods_id'])}">
+										<img src="{$v.logo}" style="width: 142px;height: 125px;" />
+									</a>
+									<h6>
+										<a href="{:url('@detail/'.$v['goods_id'])}">{$v.name}</a>
+									</h6>
+									<span class="color_sort">{$v.attr}</span>
+								</div>
+							</td>
+							<td>{$v.number}</td>
+							<td>{$v.price}</td>
+							<td><span class="total_price">{$v.price * $v.number}</span>（运费：{$v.freight}元）</td>
+							<td><span class="receiving"><a href="javascript:void(0)">{$v.status}</a></span></td>
+						</tr>
+						{/volist}
+					</tbody>
+				</table>
+				<div class="page_list">
+					{$page}
+				</div>
+			</div>
+		</div>
+{/block}
+
+{block name='footer'}
+	<script>
+		function jump(id,status){
+			if( status == 0 )
+				top.location.href = "{:url('@pay/"+id+"')}";
+			else if( status == 1 )
+				top.location.href = "{:url('@payfor/"+id+"/0')}";
+			else
+				top.location.href = "{:url('@order_detail/"+id+"')}";
+		}
+	</script>
+{/block}

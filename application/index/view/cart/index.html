@@ -1,0 +1,184 @@
+{extend name='_nav' /}
+{block name='title'}
+	<title>购物车</title>
+{/block}
+
+{block name='js'}
+	<link rel="stylesheet" href="__CSS__/shop_cart.css" />
+{/block}
+
+{block name='content'}
+		<!--内容-->
+		<div class="middle">
+			<div class="box">
+				<table cellpadding="0" cellspacing="0" border="0">
+					<thead>
+						<tr>
+							<td colspan="6">
+								<span><a href="javascript:void(0)">全场商品</a></span>
+								<span><a href="javascript:void(0)">降价商品</a></span>
+								<span><a href="javascript:void(0)">库存紧张商品</a></span>
+								<span>已选商品 <i class="price">0.00</i></span>
+								<span class="pay"><a href="javascript:void(0)" onclick="pay()">结算</a></span>
+							</td>
+						</tr>
+						<tr>
+							<th><label><input type="checkbox" class="checkAll" />全部</label></th>
+							<th>商品信息</th>
+							<th>数量</th>
+							<th>单价</th>
+							<th>金额</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody>
+						<form action="{:url('@set_pay')}" method="post">
+						{volist name='cartData' id='v'}
+						<tr>
+							<td><input type="checkbox" class="cbox" name="id[]" onchange="checkChange()" value="{$v.id}"></td>
+							<td><a href="{:url('@detail/' . $v['goods_id'])}"><img src="{$v.sm_logo}" alt="{$v.name}"  style="width: 191px;height: 92px;"></a><h4><a href="{:url('@detail/' . $v['goods_id'])}">{$v.name}</a></h4>
+								<span class="color_sort">
+								<input type="hidden" name="goods_attr_id[{$v.id}]" value="{$v.attr_value}">
+								{$v.attr}</span></td>
+							<td>
+								<span class="reduce" onclick="bottom_price(this,'{$v.id}')">-</span>
+								<input type="text" name="number[{$v.id}]" value="{$v.goods_number}" class="num" onchange="change(this,'{$v.id}')">
+								<span class="add" onclick="top_price(this,'{$v.id}')">+</span>
+							</td>
+							<td><span class="unit">{$v.price}</span></td>
+							<td><span class="total_price">{$v.total_price}</span></td>
+							<td style="display: none;"><input id="goods_id" name="goods_id[{$v.id}]" value="{$v.goods_id}" /></td>
+							<td><span></span><br><span class="del"><a href="javascript:void(0)" onclick="cart_del('{$v.id}')">删除</a></span></td>
+						</tr>
+						{/volist}
+						</form>
+					</tbody>
+					<tfoot>
+						<tr>
+							<td colspan="6">
+								<span><label><input type="checkbox" class="checkAll" />全部</label></span>
+								<span><a href="javascript:void(0)" onclick="cart_dels()">删除</a></span>
+								<span><a href="javascript:void(0)">移入收藏夹</a></span>
+								<span><a href="javascript:void(0)">分享</a></span>
+								<span>已选商品 <i id="choose_num">0</i>件</span>
+								<span>合计 <i id="sum">0.00</i></span>
+							</td>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+		</div>
+{/block}
+
+{block name='footer'}
+	<script>
+		function change(obj,id){
+			var unit = $(obj).parent().siblings().find(".unit").text();
+			unit = parseFloat(unit);
+			var number = $(obj).val();
+			var price = number * unit;
+
+			$.ajax({
+				url : "{:url('@set_price')}",
+				data : {'id':id,'number':number},
+				dataType : 'json',
+				type : 'post',
+				async : false,
+				success : function(info){
+					if( info.code == 1 ){
+						$(obj).parent().siblings().find(".total_price").html(price.toFixed(2));
+						checkChange();
+					}
+				}
+			})
+		}
+
+		function bottom_price(obj,id){
+			var number = $(obj).siblings(".num").val();
+			if( number == 1 ) number = 1;
+			else number--;
+			$(obj).siblings(".num").val(number);
+			change( $(obj).siblings(".num"),id );
+		}
+
+		function top_price(obj,id){
+			var number = $(obj).siblings(".num").val();
+			number++;
+			$(obj).siblings(".num").val(number);
+			change( $(obj).siblings(".num"),id );
+		}
+
+		function checkChange(){
+			var cbox = $("tbody").find(".cbox:checked");
+			var len = cbox.length;
+			var total = 0;
+			var price = cbox.parent().siblings().find(".total_price").each(function(){
+				total += parseFloat( $(this).text() );
+			});
+			total = total == 0 ? '0.00' : total.toFixed(2);
+			$("#choose_num").html(len);
+			$("i.price").html(total);
+			$("#sum").html(total);
+			var count = $("tbody").find(".cbox").length;
+			if( len == count )
+				$(".checkAll").attr("checked","checked");
+			else
+				$(".checkAll").removeAttr("checked");
+		}
+
+		$(".checkAll").click(function(){
+			if( typeof($(this).attr("checked")) != "undefined" ){
+				$(".checkAll").attr("checked","checked");
+				$("input[name='id[]']").attr("checked","checked");
+				checkChange();
+			}else{
+				$(".checkAll").removeAttr("checked");
+				$("input[name='id[]']").removeAttr("checked");
+				checkChange();
+			}
+		})
+
+		function cart_del(id){
+			layer.confirm('确认要删除吗？',function(index){
+				$.ajax({
+					url : "{:url('@del_cart/"+id+"')}",
+					dataType : 'json',
+					type : 'post',
+					success : function(info){
+						if( info.code == 1 ){
+							window.location.reload();
+						}
+					}
+				})
+			});
+		}
+
+		function cart_dels(){
+			var ids = [];
+			$('input[name^=id[]]:checked').each(function(){
+				ids.push( $(this).val() );
+			});
+
+			$.ajax({
+				url : "{:url('@dels_cart')}",
+				data : {'ids':ids},
+				type : 'post',
+				dataType : 'json',
+				success : function(info){
+					if( info.code==1 ){
+						window.location.reload();
+					}
+				}
+			})
+		}
+
+		function pay(){
+			var len = $("tbody").find(".cbox:checked").length;
+			if( len <= 0 )
+				layer.msg('请选择要购买的商品',{icon:2,time:1000})
+			else{
+				$("form").submit();
+			}
+		}
+	</script>
+{/block}

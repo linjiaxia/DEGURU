@@ -1,0 +1,79 @@
+{extend name='base'}
+{block name='content'}
+<title>栏目设置</title>
+</head>
+<body>
+<div class="page-container">
+	<form class="form form-horizontal">
+		<div id="tab-category" class="HuiTab">
+			<div class="row cl">
+				<label class="form-label col-xs-4 col-sm-3">
+					<span class="c-red">*</span>
+					栏目名称：</label>
+				<div class="formControls col-xs-8 col-sm-9">
+					<input type="text" class="input-text" value="" name="name">
+				</div>
+				<div class="col-3">
+				</div>
+			</div>
+			<div class="row cl">
+				<label class="form-label col-xs-4 col-sm-3">
+					<span class="c-red">*</span>
+					上级栏目：</label>
+				<div class="formControls col-xs-8 col-sm-9">
+					<span class="select-box">
+					<select class="select" name="pid" onchange="SetSubID(this);">
+						<option value="0">顶级栏目</option>
+						{volist name='list' id='v'}
+						<option value="{$v.id}">{$v.level|str_repeat='&nbsp;&nbsp;',###}{$v.name}</option>
+						{/volist}
+					</select>
+					</span>
+				</div>
+				<div class="col-3">
+				</div>
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="col-9 col-offset-3">
+				<input class="btn btn-primary radius" onclick="insert()" type="button" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+			</div>
+		</div>
+	</form>
+</div>
+{/block}
+
+{block name='footer'}
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="__AVIEW__lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="__AVIEW__lib/jquery.validation/1.14.0/jquery.validate.js"></script> 
+<script type="text/javascript" src="__AVIEW__lib/jquery.validation/1.14.0/validate-methods.js"></script> 
+<script type="text/javascript" src="__AVIEW__lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript">
+	function insert(){
+		var data = $("form").serialize();
+
+		$.ajax({
+			url : '{:url('save')}',
+			data : data,
+			dataType : 'json',
+			type : 'post',
+			success : function(info){
+				if(info.code==1){
+					layer.msg(info.msg,{icon:1,time:1000},function(){
+						parent.location.reload();
+					})
+				}else{
+					layer.msg(info.msg,{icon:2,time:1000})
+				}
+			}
+		})
+	}
+	$("input").keyup(function(e){
+	    if(e.keyCode == 13){
+	      insert();
+	    }
+	})
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+{/block}

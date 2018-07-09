@@ -1,0 +1,154 @@
+{extend name='_nav' /}
+{block name='title'}
+		<title>收货地址</title>
+{/block}
+
+{block name='js'}
+	<link rel="stylesheet" href="__CSS__/address.css" />
+	<script type="text/javascript" src="__JS__/jquery.cityselect.js"></script>
+{/block}
+
+{block name='content'}
+		<!--内容-->
+
+		<div class="middle">
+
+			<div class="box">
+
+				<form class="new_address" onsubmit="return false">
+
+					<h4>修改地址</h4>
+
+					<label for="name">姓名</label><input type="text" name="name" id="name" value="{$memberAddrData.name}" />
+
+					<br />
+
+					<label for="phone">电话</label><input type="text" name="phone" id="phone" maxlength="11" value="{$memberAddrData.phone}" />
+
+					<br />
+
+					<label>所在区域</label>
+					
+					<select id="province" class="prov" name="prov">
+
+						<option>--省--</option>
+
+					</select>
+
+					<select id="city" class="city" name="city">
+
+						<option>--市--</option>
+
+					</select>
+
+					<select id="county" class="dist" name="dist">
+
+						<option>--区--</option>
+
+					</select><br />
+
+					<label for="detail_address">详细地址</label><input type="text" name="address" id="detail_address" value="{$memberAddrData.address}" />
+
+					<br />
+
+					<label for="email">邮箱</label><input type="text" name="email" id="email" value="{$memberAddrData.email}" />
+
+					<br />
+
+					<input type="hidden" name="id" value="{$memberAddrData.id}" />
+					
+					<input type="button" id="sub" value="修改地址" onclick="update()"/>
+
+				</form>
+
+				<div class="user_info">
+
+					<span class="avatar">
+
+						<img src="{$Think.const.DS . 'upload' . $Think.const.DS . $memberData.face}"  alt="{$memberData.name}" style="width: 124px;height: 124px;" />
+
+					</span>
+
+					<span class="nickname">昵称<span>{$memberData.name}</span></span><br />
+
+					<span class="menber">会员<span>{$levelData}<img src="__STATIC__/img/address_badge.png" /></span></span><br  />
+
+					<span class="safe_account">账户安全<span class="bar"><span></span></span><span class="safe_level">中</span></span><br />
+
+					<span class="honor">我的勋章</span>
+
+				</div>
+
+				<h4>已有的地址，请选择</h4>
+
+				<ul class="exist_address">
+
+					<li>
+
+						<span class="addressee">收件人</span>
+
+						<p>详细地址</p>
+
+						<span class="tel">电话</span>
+
+						<span class="mail">邮箱</span>
+
+						<span class="code">邮编</span>
+
+						<span class="operate">操作</span>
+
+					</li>
+					{volist name='addressData' id='v'}
+					<li><span class="addressee">{$v.name}</span><p>{$v.address}</p><span class="tel">{$v.phone}</span><span class="mail">{$v.email}</span><span class="code">000000</span>
+
+						<span class="operate">
+
+							<span><a href="javascript:void(0)" onclick="edit(this,'{$v.id}')">编辑</a></span>
+
+							<span><a href="javascript:void(0)" onclick="del(this,'{$v.id}')">删除</a></span>
+
+						</span>
+
+					</li>
+					{/volist}
+				</ul>
+
+				<div class="page_list">
+
+					{$page}
+
+				</div>
+
+			</div>
+
+		</div>
+{/block}
+
+{block name='footer'}
+	<script>
+		$(function(){
+			$("#city_1").citySelect(); 
+			$(".new_address").citySelect({prov:"{$memberAddrData.prov}",city:"{$memberAddrData.city}",dist:"{$memberAddrData.dist}"});
+		})
+
+		function update(){
+			var data = $("form").serialize();
+
+			$.ajax({
+				url : "{:url('@edit_address')}",
+				data : data,
+				dataType : 'json',
+				type : 'post',
+				success : function(info){
+					if(info.code==1){
+						layer.msg(info.msg,{icon:1,time:1000},function(){
+							window.location.href = "{:url('@address')}";
+						})
+					}else{
+						layer.msg(info.msg,{icon:2,time:1000})
+					}
+				}
+			})
+		}
+	</script>
+{/block}

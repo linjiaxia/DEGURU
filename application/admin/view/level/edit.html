@@ -1,0 +1,74 @@
+{extend name='base' /}
+{block name='content'}
+<title>添加会员级别</title>
+<meta name="keywords" content="H-ui.admin v3.1,H-ui网站后台模版,后台模版下载,后台管理系统模版,HTML后台模版下载">
+<meta name="description" content="H-ui.admin v3.1，是一款由国人开发的轻量级扁平化网站后台模板，完全免费开源的网站后台管理系统模版，适合中小型CMS后台系统。">
+</head>
+<body>
+<article class="page-container">
+	<form action="" method="post" class="form form-horizontal" id="form-member-add">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>级别名称：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="{$result.name}" name="name">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>积分下限：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="{$result.bottom_number}" name="bottom_number">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>积分上限：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="{$result.top_number}" name="top_number">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>折扣率：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="{$result.rate}" name="rate" placeholder="折扣率，以百分比，如：9折=90">
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+				<input type="hidden" name="id" value="{$result.id}">
+				<input class="btn btn-primary radius" onclick="update()" type="button" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+			</div>
+		</div>
+	</form>
+</article>
+{/block}
+
+{block name='footer'}
+<!--请在下方写此页面业务相关的脚本--> 
+<script type="text/javascript" src="__AVIEW__lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript">
+	function update(){
+		var data = $("form").serialize();
+		
+		$.ajax({
+			url : '{:url('update')}',
+			data : data,
+			dataType : 'json',
+			type : 'post',
+			success : function(info){
+				if(info.code==1){
+					layer.msg(info.msg,{icon:1,time:1000},function(){
+						parent.location.reload();
+					})
+				}else{
+					layer.msg(info.msg,{icon:2,time:1000})
+				}
+			}
+		})
+	}
+	$("input").keyup(function(e){
+	    if(e.keyCode == 13){
+	      insert();
+	    }
+	})
+</script> 
+<!--/请在上方写此页面业务相关的脚本-->
+{/block}

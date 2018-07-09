@@ -1,0 +1,55 @@
+{extend name='_footer' /}
+{block name='title'}
+	<title>登录</title>
+{/block}
+
+{block name='js'}
+	<link rel="stylesheet" href="__CSS__/login.css" />
+{/block}
+
+{block name='content'}
+			<form id="login" onsubmit="return false">
+				<label for="name">账号</label><input type="text" name="username" id="name" />
+				<br />
+				<label for="pwd">密码</label><input type="password" name="password" id="pwd" />
+				<span class="square"></span>
+				<span class="forget_pwd"><a href="javascript:void(0)">忘记密码</a></span>
+				<br />
+				<label>验证码</label><input type="text" name="captcha" id="code" />
+				<span class="vertification_code"><img id="captcha" src="{:captcha_src()}" onclick="this.src='{:captcha_src()}?x='+Math.random();"></span>
+				<span class="change_img"><a id="kanbuq" href="javascript:void(0)">看不清，换一张</a></span>
+				<br />
+				<input type="button" id="sub" name="sub" value="登录">
+				<span class="registic"><a href="{:url('@register')}">免费注册</a></span>
+			</form>
+		</div>
+{/block}
+
+{block name='footer'}
+	<script>
+		$("#kanbuq").click(function(){
+			$("#captcha").attr("src","{:captcha_src()}");
+		})
+
+		$("#sub").click(function(){
+			var data = $("form").serialize();
+
+		    $.ajax({
+		      url : "{:url('@logon')}",
+		      data : data,
+		      dataType : 'json',
+		      type : 'post',
+		      success : function(info){
+		        if(info.code==1){
+		          layer.msg(info.msg,{icon:1,time:1000},function(){
+		            location.href=info.url;
+		          })
+		        }else{
+		          layer.msg(info.msg,{icon:2,time:1000})
+		          $("#captcha").attr("src","{:captcha_src()}");
+		        }
+		      }
+		    })
+		});
+	</script>
+{/block}

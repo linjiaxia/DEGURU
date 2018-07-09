@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		{block name='title'}
+		{/block}
+		<link rel="stylesheet" href="__STATIC__/css/common.css" />
+		<script type="text/javascript" src="__STATIC__/js/jquery.min.js"></script>
+		{block name='js'}
+		{/block}
+	</head>
+
+	<body>
+		<!--头部-->
+		<div class="header">
+
+			<div class="top">
+				<div>
+					<span class="shop_car"><a href="{:url('@cart')}">购物车</a></span>
+					<span class="msg"><a href="javascript:void(0)">消息通知</a></span>
+					{if condition='session("m_id")'}
+					<span class="login"><a href="{:url('@member')}">欢迎您，{$Think.session.m_name}</a></span>
+					<span class="register"><a href="{:url('@logout')}">退出登录</a></span>
+					{else /}
+					<span class="login"><a href="{:url('@logon')}">登录</a></span>
+					<span class="register"><a href="{:url('@register')}">注册</a></span>
+					{/if}
+				</div>
+			</div>
+			<!--logo&搜索栏-->
+			<div>
+				<div class="logo"><a href="{:url('@'.$constactData[0]['url'])}"><img src="{$Think.const.DS . 'upload' . $Think.const.DS . $constactData.0.img}" alt="{$constactData.0.name}" style="width: 191px;height: 43px;"></a></div>
+				<form class="search" action="{:url('@list')}" method="post"><label>宝贝</label><input type="text" name="condition" placeholder="请输入关键字" /><button type="submit">搜索</button></form>
+			</div>
+			<div class="nav">
+				<div class="sidebar">
+					<span class="sort">商品分类</span>
+					<ul>
+						{volist name='catData' id='v'}
+						<li><a href="{:url('@list/'.$v['id'])}">{$v.name}   &gt;</a></li>
+						{/volist}
+					</ul>
+				</div>
+
+				<ul>
+					{volist name='navData' id='v'}
+					<li><a href="{:url('@' . $v['url'])}">{$v.name}</a></li>
+					{/volist}
+				</ul>
+			</div>
+		</div>
+{block name='content'}
+{/block}
+
+<!--尾部-->
+		<div class="footer">
+			<ul>
+				{volist name='constactData' id='v' offset='1' length='4'}
+				<li><img src="{$Think.const.DS . 'upload' . $Think.const.DS . $v.img}" alt=""><span>{$v.name}</span></li>
+				{/volist}
+			</ul>
+			<hr>
+			<div>
+				<dl>
+					<dt>{$constactData.5.name}</dt>
+					<dd>{$constactData.6.name}</dd>
+					<dd>{$constactData.7.name}</dd>
+					<dd>{$constactData.8.name}</dd>
+				</dl>
+				<dl>
+					<dt>{$constactData.9.name}</dt>
+					<dd>{$constactData.10.name}</dd>
+					<dd>{$constactData.11.name}</dd>
+					<dd>{$constactData.12.name}</dd>
+				</dl>
+				<dl>
+					<dt>{$constactData.13.name}</dt>
+					<dd>{$constactData.14.name}</dd>
+					<dd>{$constactData.15.name}</dd>
+					<dd>{$constactData.16.name}</dd>
+				</dl>
+				<dl>
+					<dt>{$constactData.17.name}</dt>
+					<dd>{$constactData.18.name}</dd>
+					<dd>{$constactData.19.name}</dd>
+					<dd>{$constactData.20.name}</dd>
+				</dl>
+				
+				<span>{$constactData.21.content}</span>
+				<p>{$constactData.21.name}</p>
+			</div>
+
+			<p>{$constactData.22.content}</p>
+			<p>{$constactData.23.content}</p>
+		</div>
+		<script type="text/javascript" src="__AVIEW__lib/layer/2.4/layer.js"></script>
+		{block name='footer'}
+		{/block}
+	</body>
+
+</html>

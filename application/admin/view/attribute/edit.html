@@ -1,0 +1,82 @@
+{extend name='base' /}
+{block name='content'}
+<link href="__AVIEW__lib/webuploader/0.1.5/webuploader.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="page-container">
+	<form action="" method="post" class="form form-horizontal" id="form-article-add">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>所属类型：</label>
+			<div class="formControls col-xs-8 col-sm-9"> <span class="select-box">
+				<select name="type_id" class="select">
+					<option>请选择类型</option>
+					{volist name='list' id='v'}
+					<option value="{$v.id}"
+					{$v.id == $result.type_id ? 'selected="selected"':''}
+					>{$v.name}</option>
+					{/volist}
+				</select>
+				</span> </div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>属性名称：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="{$result.name}" name="name">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>属性可选：</label>
+			<div class="formControls col-xs-8 col-sm-9"> <span class="select-box">
+				<select name="choice" class="select">
+					<option>请选择</option>
+					<option value="0" {$result.choice == 0 ? 'selected="selected"' : ''}>唯一</option>
+					<option value="1" {$result.choice == 1 ? 'selected="selected"' : ''}>可选</option>
+				</select>
+				</span> </div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">属性可选值：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" name="values" placeholder="多个可选值用，号隔开" value="{$result.values}" class="input-text">
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+				<input type="hidden" name="id" value="{$result.id}">
+				<button onclick="update()" class="btn btn-primary radius" type="button"><i class="Hui-iconfont">&#xe632;</i> 提交</button>
+			</div>
+		</div>
+	</form>
+</div>
+{/block}
+
+{block name='footer'}
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="__AVIEW__lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript">
+	function update(){
+		var data = $("form").serialize();
+
+		$.ajax({
+			url : "{:url('update')}",
+			data : data,
+			dataType : 'json',
+			type : 'post',
+			success : function(info){
+				if(info.code==1){
+					layer.msg(info.msg,{icon:1,time:1000},function(){
+						parent.location.reload();
+					})
+				}else{
+					layer.msg(info.msg,{icon:2,time:1000})
+				}
+			}
+		})
+	}
+	$("input").keyup(function(e){
+	    if(e.keyCode == 13){
+	      $("input[type='button']").click();
+	    }
+	})
+</script>
+{/block}

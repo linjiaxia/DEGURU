@@ -1,0 +1,52 @@
+{extend name='base' /}
+{block name='content'}
+<link href="__AVIEW__lib/webuploader/0.1.5/webuploader.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="page-container">
+	<form class="form form-horizontal">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>类型名称：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="" name="name">
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+				<button onclick="insert()" class="btn btn-primary radius" type="button"> 提交</button>
+			</div>
+		</div>
+	</form>
+</div>
+{/block}
+
+{block name='footer'}
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="__AVIEW__lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript">
+	function insert(){
+		var data = $("form").serialize();
+
+		$.ajax({
+			url : '{:url('save')}',
+			data : data,
+			dataType : 'json',
+			type : 'post',
+			success : function(info){
+				if(info.code==1){
+					layer.msg(info.msg,{icon:1,time:1000},function(){
+						parent.location.reload();
+					})
+				}else{
+					layer.msg(info.msg,{icon:2,time:1000})
+				}
+			}
+		})
+	}
+	$("input").keyup(function(e){
+	    if(e.keyCode == 13){
+	      insert();
+	    }
+	})
+</script>
+{/block}

@@ -1,0 +1,137 @@
+﻿{extend name='base' /}
+{block name='content'}
+<title>订单列表</title>
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 订单管理 <span class="c-gray en">&gt;</span> 订单管理 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">
+	<div class="text-c">
+		<input type="text" class="input-text" style="width:250px" placeholder="输入订单名称，id" name="">
+		<button type="submit" class="btn btn-success radius" id="" name=""><i class="Hui-iconfont">&#xe665;</i> 搜订单</button>
+	</div>
+	<div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="l"> </span> <span class="r">共有数据：<strong>{$total}</strong> 条</span> </div>
+	<div class="mt-20">
+	<table class="table table-border table-bordered table-hover table-bg table-sort">
+		<thead>
+			<tr class="text-c">
+				<th width="25"><input type="checkbox" name="" value=""></th>
+				<th width="120">订单号</th>
+				<th width="50">会员名称</th>
+				<th width="80">商品名称</th>
+				<th width="80">商品属性</th>
+				<th width="80">联系电话</th>
+				<th width="80">收货地址</th>
+				<th width="50">支付状态</th>
+				<th width="50">发货状态</th>
+				<th width="80">操作</th>
+			</tr>
+		</thead>
+		<tbody>
+			{volist name='orderData' id='v'}
+			<tr class="text-c">
+				<td><input type="checkbox" value="{$v.id}" name="id"></td>
+				<td>{$v.order_number}</td>
+				<td>{$v.member}</td>
+				<td>{$v.goods_name}</td>
+				<td>{$v.attr_name}</td>
+				<td>{$v.phone}</td>
+				<td>{$v.address}</td>
+				<td class="td-status"><span class="label 
+				{switch name='$v.pay_status'}
+					{case value='0'}label-error{/case}
+					{case value='1'}label-danger{/case}
+					{case value='2'}label-primary{/case}
+				{/switch}
+				radius">
+				{switch name='$v.pay_status'}
+					{case value='0'}待支付{/case}
+					{case value='1'}未支付{/case}
+					{case value='2'}已支付{/case}
+				{/switch}
+				</span></td>
+				<td class="td-status"><span class="label 
+				{switch name='$v.post_status'}
+					{case value='0'}label-danger{/case}
+					{case value='1'}label-warning{/case}
+					{case value='2'}label-success{/case}
+				{/switch}
+				radius">
+				{switch name='$v.post_status'}
+					{case value='0'}未发货{/case}
+					{case value='1'}已发货{/case}
+					{case value='2'}已收货{/case}
+				{/switch}
+				</span></td>
+				<td class="td-manage"><a style="text-decoration:none" onclick="show('订单查看','{:url('detail',['id'=>$v.id])}','','350')" href="javascript:;" title="订单查看"><i class="Hui-iconfont">&#xe637;</i></a>
+				{switch name='$v.post_status'}
+				{case value='0'}
+					{if condition='$v.pay_status == 2'}
+					<a style="text-decoration:none" class="ml-5" onclick="confirm('{$v.id}')" href="javascript:;" title="确认发货"><i class="Hui-iconfont">&#xe634;</i></a>
+					{/if}
+				{/case}
+				{case value='1'}
+					<a style="text-decoration:none" class="ml-5" onclick="receipt('{$v.id}')" href="javascript:;" title="确认发货"><i class="Hui-iconfont">&#xe6ab;</i></a>
+				{/case}
+				{/switch}
+				</td>
+			</tr>
+			{/volist}
+		</tbody>
+	</table>
+	{$page}
+	</div>
+</div>
+{/block}
+
+{block name='footer'}
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="__AVIEW__lib/My97DatePicker/4.8/WdatePicker.js"></script> 
+<script type="text/javascript" src="__AVIEW__lib/datatables/1.10.0/jquery.dataTables.min.js"></script> 
+<script type="text/javascript" src="__AVIEW__lib/laypage/1.2/laypage.js"></script>
+<script type="text/javascript">
+/*详情*/
+function show(title,url,w,h){
+	layer_show(title,url,w,h);
+}
+/*确认发货*/
+function confirm(id){
+	layer.confirm('确认已发货吗？',function(index){
+		$.ajax({
+			type : 'post',
+			url : "{:url('confirm')}",
+			data : {'id':id},
+			dataType : 'json',
+			success : function(info){
+				if(info.code==1){
+					layer.msg(info.msg,{icon:1,time:1000},function(){
+						window.location.reload();
+					});
+				}else{
+					layer.msg(info.msg,{icon:2,time:1000});
+				}
+			}
+		});
+	});
+}
+/*确认收货*/
+function receipt(id){
+	layer.confirm('确认对方已收货吗？',function(index){
+		$.ajax({
+			type : 'post',
+			url : "{:url('receipt')}",
+			data : {'id':id},
+			dataType : 'json',
+			success : function(info){
+				if(info.code==1){
+					layer.msg(info.msg,{icon:1,time:1000},function(){
+						window.location.reload();
+					});
+				}else{
+					layer.msg(info.msg,{icon:2,time:1000});
+				}
+			}
+		});
+	});
+}
+</script> 
+{/block}

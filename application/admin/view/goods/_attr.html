@@ -1,0 +1,32 @@
+{volist name='attr' id='v' empty=''}
+{if condition='$v.values == ""'}
+<div class="row cl">
+	<label class="form-label col-xs-4 col-sm-2">{$v.name}：</label>
+	<div class="formControls col-xs-8 col-sm-9">
+		<input type="text" class="input-text" value="" name="attr[{$v.id}][]">
+	</div>
+</div>
+{else /}
+<div class="row cl attr{$v.id}">
+	<label class="form-label col-xs-4 col-sm-2">
+		{if condition='$v.choice == 1'}
+		<a href="javascript:void(0);" onclick="change(this,'{$v.id}')" class="btn btn-primary radius"><i class="Hui-iconfont true">&#xe600;</i></a>
+		{/if}
+		{$v.name}：
+	</label>
+	<div class="formControls col-xs-8 col-sm-9"> 
+		<span class="select-box" style="width:25%">
+		<select name="attr[{$v.id}][]" class="select">
+			<option value="">请选择</option>
+			{volist name='v.values' id='vo'}
+			<option value="{$vo}">{$vo}</option>
+			{/volist}
+		</select>
+		</span> 
+		{if condition='$v.choice == 1'}
+			<input type="text" name="attr_price[{$v.id}][]" placeholder="此属性比商品价多出的价格，不填或填0，默认与原价相同" value="" class="input-text" style="width:50%">元
+		{/if}
+	</div>
+</div>
+{/if}
+{/volist}

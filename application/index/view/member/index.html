@@ -1,0 +1,227 @@
+{extend name='_middle' /}
+{block name='title'}
+	<title>会员中心</title>
+{/block}
+
+{block name='js'}
+		<link rel="stylesheet" href="__CSS__/user.css" />
+{/block}
+
+{block name='content'}
+		<!--内容-->
+		<div class="middle">
+			<div class="box">
+				<div class="user_list">
+					<h2>会员中心</h2>
+					<dl>
+						<dt><a href="{:url('@cart')}">我的购物车</a></dt>
+					</dl>
+					<dl>
+						<dt><a href="javascript:void(0)">购物管理</a></dt>
+						<dd><a href="{:url('@order')}">我的订单</a></dd>
+						<dd><a href="{:url('@address/0')}">收货地址</a></dd>
+					</dl>
+					<dl>
+						<dt><a href="javascript:void(0)">账户设置</a></dt>
+						<dd><a href="{:url('@member')}">账户信息</a></dd>
+						<dd><a href="javascript:void(0)">密码修改</a></dd>
+						<dd><a href="{:url('@logout')}">安全退出</a></dd>
+					</dl>
+					<dl>
+						<dt><a href="javascript:void(0)">交易管理</a></dt>
+						<dd><a href="javascript:void(0)">充币记录</a></dd>
+					</dl>
+				</div>
+				<div class="user_info">
+					<span class="user_icon">
+						<img src="{$Think.const.DS . 'upload' . $Think.const.DS . $memberData.face}"  alt="{$memberData.name}" style="width: 171px;height: 171px;" />
+						<a href="javascript:void(0)">修改个人资料</a>
+					</span>
+					<ol>
+						<li><span class="nickname">{$memberData.name}</span></li>
+						<li>
+							<p class="balance">我的余额<span>{$memberData.money}</span></p>
+						</li>
+					</ol>
+					<ul>
+						<li>
+							<span>
+								<a href="javascript:void(0)"><img src="__STATIC__/img/user_finish_icon.png" /></a>
+							</span>
+							<a href="javascript:void(0)">已完成  {$doneData}</a>
+						</li>
+						<li>
+							<span>
+								<a href="javascript:void(0)"><img src="__STATIC__/img/user_unpay_icon.png" /></a>
+							</span>
+							<a href="javascript:void(0)">待付款  {$waitData}</a>
+						</li>
+						<li>
+							<span>
+								<a href="javascript:void(0)"><img src="__STATIC__/img/user_transfer_icon.png" /></a>
+							</span>
+							<a href="javascript:void(0)">待收货  {$awaitData}</a>
+						</li>
+						<li>
+							<span>
+								<a href="javascript:void(0)"><img src="__STATIC__/img/user_comment_icon.png" /></a>
+							</span>
+							<a href="javascript:void(0)">待评价  {$beforeCommentData}</a>
+						</li>
+					</ul>
+				</div>
+				<form class="user" name="reg_testdate">
+					<label for="username">头像</label><input type="button" id="upload_face" value="上传头像" onclick="uploadFace()" />
+					<input type="file" name="face" style="display: none;" />
+					<br />
+					<label for="logname"></label><input type="hidden" /><br />
+					<label for="nickname">昵称</label><input id="nickname" type="text" name="name" 
+					{if condition='$memberData.status == 1'}
+					value="{$memberData.name}"
+					{elseif condition='$memberData.status == 0'}
+					placeholder="{$memberData.name}" 
+					{/if}
+					/><br />
+					<label>性别</label>
+					<input type="radio" name="gender" value="1" id="male" {$memberData.gender == 1 ? 'checked="checked"':''} /><label for="male">男</label>
+					<input type="radio" name="gender" value="2" id="female" {$memberData.gender == 2 ? 'checked="checked"':''} /><label for="female">女</label>
+					<input type="radio" name="gender" value="0" id="secret" {$memberData.gender == 0 ? 'checked="checked"':''} /><label for="secret">保密</label><br />
+					<label>生日</label>
+					<select id="year" name="YYYY" onchange="YYYYDD(this.value)">
+					</select>
+					<select id="month" name="MM" onchange="MMDD(this.value)">
+					</select>
+					<select id="day" name="DD">
+					</select><br />
+					<label>邮箱</label>
+					{if condition='$memberData.status == 0'}
+					<a href="javascript:void(0)" onclick="checkMail()">立即验证</a>
+					{else /}
+					<a href="javascript:void(0)">已激活</a>
+					{/if}
+					<br />
+					<label for="realname">真实姓名</label><input type="text" id="realname" name="real_name" value="{$memberData.real_name}" /><br />
+					<label for="hobby">兴趣爱好</label><input type="text" id="hobby" name="hobby" value="{$memberData.hobby}" /><br />
+					<input type="button" value="提交" id="submit" onclick="setMsg()" />
+				</form>
+			</div>
+		</div>
+{/block}
+
+{block name='footer'}
+	<script>
+		$(function(){
+			birthday = "{$memberData.birthday|date='Ymd',###}";
+			if(birthday != 0){
+				year = birthday.substr(0,4);
+				month = birthday.substr(4,2);
+				if(month.substr(0,1) == 0) month = month.substr(1,1);
+				day = birthday.substr(6,2);
+				if(day.substr(0,1) == 0) day = day.substr(1,1);
+			}
+		})
+
+		function YYYYMMDDstart()   
+		{   
+	       MonHead = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];   
+
+	       //先给年下拉框赋内容   
+	        var y  = new Date().getFullYear();   
+	        for (var i = (y-30); i < (y+30); i++)
+	        	//以今年为准，前30年，后30年   
+            	document.reg_testdate.YYYY.options.add(new Option(" "+ i +" 年", i));
+
+	        //赋月份的下拉框   
+	        for (var i = 1; i < 13; i++)   
+	               document.reg_testdate.MM.options.add(new Option(" " + i + " 月", i));   
+
+	        document.reg_testdate.YYYY.value = y;   
+	        document.reg_testdate.MM.value = new Date().getMonth() + 1;   
+	        var n = MonHead[new Date().getMonth()];   
+	        if (new Date().getMonth() ==1 && IsPinYear(YYYYvalue)) n++;   
+	        	writeDay(n); //赋日期下拉框Author:meizz   
+	        document.reg_testdate.DD.value = new Date().getDate(); 
+	        $("#year option[value="+year+"]").attr("selected",true);
+	        $("#month option[value="+month+"]").attr("selected",true);
+	        $("#day option[value="+day+"]").attr("selected",true);
+		}   
+		if(document.attachEvent)   
+		    window.attachEvent("onload", YYYYMMDDstart);   
+		else   
+		    window.addEventListener('load', YYYYMMDDstart, false); 
+
+		function YYYYDD(str) //年发生变化时日期发生变化(主要是判断闰平年)   
+		{   
+		        var MMvalue = document.reg_testdate.MM.options[document.reg_testdate.MM.selectedIndex].value;   
+		        if (MMvalue == ""){ var e = document.reg_testdate.DD; optionsClear(e); return;}   
+		        var n = MonHead[MMvalue - 1];   
+		        if (MMvalue == 2 && IsPinYear(str)) n++;   
+		            writeDay(n)   
+		}   
+
+		function MMDD(str)   //月发生变化时日期联动   
+		{   
+		    var YYYYvalue = document.reg_testdate.YYYY.options[document.reg_testdate.YYYY.selectedIndex].value;   
+		    if (YYYYvalue == ""){ var e = document.reg_testdate.DD; optionsClear(e); return;}   
+		    var n = MonHead[str - 1];   
+		    if (str == 2 && IsPinYear(YYYYvalue)) n++;   
+		    writeDay(n)   
+		}   
+
+		function writeDay(n)   //据条件写日期的下拉框   
+		{   
+		        var e = document.reg_testdate.DD; optionsClear(e);   
+		        for (var i=1; i<(n+1); i++)   
+		            e.options.add(new Option(" "+ i + " 日", i));   
+		}   
+		function IsPinYear(year)//判断是否闰平年   
+		{     
+			return(0 == year%4 && (year%100 !=0 || year%400 == 0));
+		}   
+		function optionsClear(e)   
+		{   
+		    e.options.length = 1;   
+		}
+
+		function uploadFace(){
+			$("input[name='face']").click();
+		}
+
+		function checkMail(){
+			$.ajax({
+				url : "{:url('@set_email')}",
+				dataType : 'json',
+				type : 'post',
+				success : function(info){
+					if(info.code==1){
+						layer.msg(info.msg,{icon:1,time:1000});
+					}else{
+						layer.msg(info.msg,{icon:2,time:1000});
+					}
+				}
+			});
+		}
+
+		function setMsg(){
+			var data = new FormData($("[name='reg_testdate']")[0]);
+
+			$.ajax({
+				url : "{:url('@member')}",
+				data : data,
+				dataType : 'json',
+				type : 'post',
+				processData: false,  // 告诉jQuery不要去处理发送的数据
+				contentType: false,   // 告诉jQuery不要去设置Content-Type请求头
+				success : function(info){
+					if(info.code==1){
+						layer.msg(info.msg,{icon:1,time:1000},function(){
+							window.location.reload();
+						})
+					}else{
+						layer.msg(info.msg,{icon:2,time:1000});
+					}
+				}
+			});
+		}
+	</script>
+{/block}

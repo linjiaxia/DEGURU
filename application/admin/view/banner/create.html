@@ -1,0 +1,63 @@
+{extend name='base' /}
+{block name='content'}
+<link href="__AVIEW__lib/webuploader/0.1.5/webuploader.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="page-container">
+	<form class="form form-horizontal" id="form" enctype="multipart/form-data">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>Banner名称：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="" name="name">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>Banner图：</label>
+			<div class="formControls col-xs-8 col-sm-9"> <span class="btn-upload form-group">
+				<input class="input-text upload-url" type="text" name="uploadfile" id="uploadfile" readonly nullmsg="请添加附件！" style="width:200px">
+				<a href="javascript:void();" class="btn btn-primary radius upload-btn"><i class="Hui-iconfont">&#xe642;</i> 上传图片</a>
+				<input type="file" multiple name="pic" class="input-file">
+				</span> </div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+				<button onclick="insert();" class="btn btn-primary radius" type="button"> 提交</button>
+			</div>
+		</div>
+	</form>
+</div>
+{/block}
+
+{block name='footer'}
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="__AVIEW__lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="__AVIEW__lib/webuploader/0.1.5/webuploader.min.js"></script>
+<script type="text/javascript">
+	function insert(){
+		var data = new FormData($('form')[0]); 
+		
+		$.ajax({
+			url : '{:url('save')}',
+			data : data,
+			dataType : 'json',
+			type : 'post',
+			processData: false,  // 告诉jQuery不要去处理发送的数据
+			contentType: false,   // 告诉jQuery不要去设置Content-Type请求头
+			success : function(info){
+				if(info.code==1){
+					layer.msg(info.msg,{icon:1,time:1000},function(){
+						parent.location.reload();
+					})
+				}else{
+					layer.msg(info.msg,{icon:2,time:1000})
+				}
+			}
+		})
+	}
+	$("input").keyup(function(e){
+	    if(e.keyCode == 13){
+	      insert();
+	    }
+	})
+</script>
+{/block}

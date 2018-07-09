@@ -1,0 +1,125 @@
+﻿{extend name='base' /}
+{block name='content'}
+<title>新建网站角色 - 管理员管理 - H-ui.admin v3.1</title>
+<meta name="keywords" content="H-ui.admin v3.1,H-ui网站后台模版,后台模版下载,后台管理系统模版,HTML后台模版下载">
+<meta name="description" content="H-ui.admin v3.1，是一款由国人开发的轻量级扁平化网站后台模板，完全免费开源的网站后台管理系统模版，适合中小型CMS后台系统。">
+</head>
+<body>
+<article class="page-container">
+	<form action="" method="post" class="form form-horizontal" id="form-admin-role-add">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>角色名称：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="" name="name">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>描述：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value=""
+				 name="describe">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>角色权限：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				{volist name='list' id='v'}
+				<dl class="permission-list">
+					<dt>
+						<label>
+							<input type="checkbox" value="{$v.id}" name="pri_id[]" id="user-Character-0">
+							{$v.name}</label>
+					</dt>
+					<dd>
+						{volist name='v.next' id='v1'}
+						<dl class="cl permission-list2">
+							<dt>
+								<label class="">
+									<input type="checkbox" value="{$v1.id}" name="pri_id[]" id="user-Character-0-0">
+									{$v1.name}</label>
+							</dt>
+							<dd>
+								{volist name='v1.next' id='v2'}
+								<label class="">
+									<input type="checkbox" value="{$v2.id}" name="pri_id[]" id="user-Character-0-0-0">
+									{$v2.name}</label>
+								{/volist}
+							</dd>
+						</dl>
+						{/volist}
+					</dd>
+				</dl>
+				{/volist}
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+				<button type="button" onclick="insert()" class="btn btn-success radius"><i class="icon-ok"></i> 确定</button>
+			</div>
+		</div>
+	</form>
+</article>
+{/block}
+
+{block name='footer'}
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="__AVIEW__lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="__AVIEW__lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="__AVIEW__lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript">
+$(function(){
+	$(".permission-list dt input:checkbox").click(function(){
+		$(this).closest("dl").find("dd input:checkbox").prop("checked",$(this).prop("checked"));
+	});
+	$(".permission-list2 dd input:checkbox").click(function(){
+		var l =$(this).parent().parent().find("input:checked").length;
+		var l2=$(this).parents(".permission-list").find(".permission-list2 dd").find("input:checked").length;
+		if($(this).prop("checked")){
+			$(this).closest("dl").find("dt input:checkbox").prop("checked",true);
+			$(this).parents(".permission-list").find("dt").first().find("input:checkbox").prop("checked",true);
+		}
+		else{
+			if(l==0){
+				$(this).closest("dl").find("dt input:checkbox").prop("checked",false);
+			}
+			if(l2==0){
+				$(this).parents(".permission-list").find("dt").first().find("input:checkbox").prop("checked",false);
+			}
+		}
+	});
+});
+function insert(){
+	var ids = [];
+	$('input[name^=pri_id]:checked').each(function(){
+		ids.push($(this).val());
+	});
+	var data = {
+		'name' : $('[name="name"]').val(),
+		'describe' : $('[name="describe"]').val(),
+		'pri_id' : ids,
+	}
+
+	$.ajax({
+		url : '{:url('save')}',
+		data : data,
+		dataType : 'json',
+		type : 'post',
+		success : function(info){
+			if(info.code==1){
+				layer.msg(info.msg,{icon:1,time:1000},function(){
+					parent.location.reload();
+				})
+			}else{
+				layer.msg(info.msg,{icon:2,time:1000})
+			}
+		}
+	})
+}
+	$("input").keyup(function(e){
+	    if(e.keyCode == 13){
+	      insert();
+	    }
+	})
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+{/block}
